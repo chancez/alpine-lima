@@ -19,5 +19,6 @@ RUN abuild-keygen -i -a -n
 RUN apk update
 
 ADD src/aports /home/build/aports
+ADD apk-keys/* /etc/apk/keys/
 WORKDIR /home/build/aports/scripts
 ENTRYPOINT ["sh", "./mkimage.sh"]

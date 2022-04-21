@@ -43,4 +43,7 @@ profile_lima() {
         if [ "${LIMA_INSTALL_IPTABLES}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL}" == "true" ]; then
             apks="$apks iptables ip6tables"
         fi
+        if [ "${LIMA_INSTALL_LINUX_DEBUG}" == "true" ]; then
+            apks="$apks linux-virt-dbg"
+        fi
 }

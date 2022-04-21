@@ -10,6 +10,7 @@ TAG="${EDITION}-${ALPINE_VERSION}"
 source "edition/${EDITION}"
 
 ${DOCKER} run --rm \
+    -it \
     --platform "linux/${ARCH_ALIAS}" \
     -v "${PWD}/iso:/iso" \
     -v "${PWD}/mkimg.lima.sh:/home/build/aports/scripts/mkimg.lima.sh:ro" \
@@ -18,6 +19,7 @@ ${DOCKER} run --rm \
     -v "${PWD}/lima-init.openrc:/home/build/lima-init.openrc:ro" \
     -v "${PWD}/lima-init-local.openrc:/home/build/lima-init-local.openrc:ro" \
     -v "${PWD}/lima-network.awk:/home/build/lima-network.awk:ro" \
+    -v "${PWD}/lima-packages:/home/build/packages:ro" \
     -v "${PWD}/nerdctl-${NERDCTL_VERSION}-${ARCH}:/home/build/nerdctl.tar.gz:ro" \
     -v "${PWD}/qemu-${QEMU_VERSION}-copying:/home/build/qemu-copying:ro" \
     -v "${PWD}/cri-dockerd-${CRI_DOCKERD_VERSION}-${ARCH}:/home/build/cri-dockerd.tar.gz:ro" \
@@ -30,6 +32,9 @@ ${DOCKER} run --rm \
     --tag "${TAG}" \
     --outdir /iso \
     --arch "${ARCH}" \
+    --repository "/home/build/packages/testing" \
+    --repository "/home/build/packages/community" \
+    --repository "/home/build/packages/main" \
     --repository "http://dl-cdn.alpinelinux.org/alpine/${REPO_VERSION}/main" \
     --repository "http://dl-cdn.alpinelinux.org/alpine/${REPO_VERSION}/community" \
     --profile lima

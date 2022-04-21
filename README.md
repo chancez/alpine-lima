@@ -40,7 +40,7 @@ The "rd" edition includes additional components for Rancher Desktop. These can c
 
 ## Architecture
 
-This repo supports the generation of images for different architectures. 
+This repo supports the generation of images for different architectures.
 Only `x86_64` and `aarch64` have been tested but other architectures can also be generated.
 
 ## Building and testing
