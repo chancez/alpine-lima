@@ -1,3 +1,36 @@
+lima_community_edge_pkgs() {
+	apk fetch --root "$APKROOT" --recursive \
+	  --no-cache \
+    --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+    cni-plugins \
+    $@
+}
+
+build_lima_packages() {
+	local _apksdir="$DESTDIR/lima-packages"
+	local _archdir="$_apksdir/$ARCH"
+	mkdir -p "$_archdir"
+
+  lima_community_edge_pkgs --link --output "$_archdir"
+
+	if ! ls "$_archdir"/*.apk >& /dev/null; then
+		return 1
+	fi
+
+	apk index \
+		--description "$RELEASE" \
+		--rewrite-arch "$ARCH" \
+		--index "$_archdir"/APKINDEX.tar.gz \
+		--output "$_archdir"/APKINDEX.tar.gz \
+		"$_archdir"/*.apk
+	abuild-sign "$_archdir"/APKINDEX.tar.gz
+	touch "$_apksdir/.boot_repository"
+}
+
+section_lima_packages() {
+	build_section lima_packages $ARCH $( lima_community_edge_pkgs --simulate | sort | checksum)
+}
+
 profile_lima() {
 	profile_standard
 	profile_abbrev="lima"

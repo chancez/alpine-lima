@@ -102,12 +102,6 @@ rc_add lima-overlay default
 mkdir -p "$tmp"/etc/pam.d
 cp /home/build/sshd.pam "${tmp}/etc/pam.d/sshd"
 
-PKG_ARCH="$(uname -m)"
-LIMA_PKG_DIR="${tmp}/lima-packages/${PKG_ARCH}"
-# Lima extra packages
-mkdir -p "${LIMA_PKG_DIR}"
-echo "/lima-packages/${PKG_ARCH}" >> "${tmp}/etc/apk/repositories"
-
 if [ "${LIMA_INSTALL_LIMA_INIT}" == "true" ]; then
     rc_add lima-init default
     rc_add lima-init-local default
@@ -209,10 +203,6 @@ if [ "${LIMA_INSTALL_CA_CERTIFICATES}" == "true" ]; then
 fi
 
 if [ "${LIMA_INSTALL_CNI_PLUGINS}" == "true" ]; then
-    # install newer CNI plugins for RancherDesktop
-    if [ "${LIMA_VARIANT_ID}" == "rd" ]; then
-      apk fetch -o "${LIMA_PKG_DIR}" cni-plugins --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
-    fi
     echo "cni-plugins" >> "$tmp"/etc/apk/world
 fi
 
@@ -264,12 +254,7 @@ if [ "${LIMA_INSTALL_CRI_DOCKERD}" == "true" ]; then
     cp "${tmp}/cri-dockerd/LICENSE" "${tmp}/usr/share/doc/cri-dockerd/"
 fi
 
-if [ $(find "${LIMA_PKG_DIR}" -type f -name '*.apk' | wc -l) -gt 0 ]; then
-  apk index -o "${LIMA_PKG_DIR}/APKINDEX.tar.gz" ${LIMA_PKG_DIR}/*.apk
-  abuild-sign "${LIMA_PKG_DIR}/APKINDEX.tar.gz"
-fi
-
 mkdir -p "${tmp}/etc"
 mkdir -p "${tmp}/usr"
 
-tar -c -C "$tmp" etc usr lima-packages | gzip -9n > $HOSTNAME.apkovl.tar.gz
+tar -c -C "$tmp" etc usr | gzip -9n > $HOSTNAME.apkovl.tar.gz
