@@ -10,6 +10,7 @@ TAG="${EDITION}-${ALPINE_VERSION}"
 source "edition/${EDITION}"
 
 ${DOCKER} run --rm \
+    -it \
     --platform "linux/${ARCH_ALIAS}" \
     -v "${PWD}/iso:/iso" \
     -v "${PWD}/mkimg.lima.sh:/home/build/aports/scripts/mkimg.lima.sh:ro" \
@@ -30,6 +31,7 @@ ${DOCKER} run --rm \
     --tag "${TAG}" \
     --outdir /iso \
     --arch "${ARCH}" \
+    --repository "/home/build/packages/lima" \
     --repository "http://dl-cdn.alpinelinux.org/alpine/${REPO_VERSION}/main" \
     --repository "http://dl-cdn.alpinelinux.org/alpine/${REPO_VERSION}/community" \
     --profile lima
